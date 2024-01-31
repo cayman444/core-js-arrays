@@ -330,9 +330,9 @@ function selectMany(arr, childrenSelector) {
  */
 function calculateBalance(arr) {
   if (arr.length === 0) return 0;
-  return arr.reduce((acc, el) => {
-    return acc[0] - acc[1] + (el[0] - el[1]);
-  });
+  return Array.from({ length: arr.length }, (_, ind) => {
+    return arr[ind][0] - arr[ind][1];
+  }).reduce((acc, el) => acc + el);
 }
 
 /**
@@ -347,8 +347,17 @@ function calculateBalance(arr) {
  *    createChunks(['a', 'b', 'c', 'd', 'e'], 2) => [['a', 'b'], ['c', 'd'], ['e']]
  *    createChunks([10, 20, 30, 40, 50], 1) => [[10], [20], [30], [40], [50]]
  */
-function createChunks(/* arr, chunkSize */) {
-  throw new Error('Not implemented');
+function createChunks(arr, chunkSize) {
+  return arr.reduce((acc, el, ind) => {
+    const chunkIndex = Math.floor(ind / chunkSize);
+
+    if (!acc[chunkIndex]) {
+      acc[chunkIndex] = [];
+    }
+
+    acc[chunkIndex].push(el);
+    return acc;
+  }, []);
 }
 
 /**
@@ -460,8 +469,10 @@ function getIndicesOfOddNumbers(numbers) {
  *    getHexRGBValues([ 0, 255, 16777215]) => [ '#000000', '#0000FF', '#FFFFFF' ]
  *    getHexRGBValues([]) => []
  */
-function getHexRGBValues(/* arr */) {
-  throw new Error('Not implemented');
+function getHexRGBValues(arr) {
+  return arr.map((el) => {
+    return `#${el.toString(16).toUpperCase().padStart(6, '0')}`;
+  });
 }
 
 /**
@@ -554,8 +565,11 @@ function propagateItemsByPositionIndex(arr) {
  *    shiftArray(['a', 'b', 'c', 'd'], -1) => ['b', 'c', 'd', 'a']
  *    shiftArray([10, 20, 30, 40, 50], -3) => [40, 50, 10, 20, 30]
  */
-function shiftArray(/* arr, n */) {
-  throw new Error('Not implemented');
+function shiftArray(arr, n) {
+  if (n > 0) {
+    return arr.slice(-n).concat(arr.slice(0, arr.length - n));
+  }
+  return arr.slice(-n, arr.length - n).concat(arr.slice(0, -n));
 }
 
 /**
@@ -571,8 +585,22 @@ function shiftArray(/* arr, n */) {
  *   sortDigitNamesByNumericOrder([ 'nine','eight','nine','eight' ]) => [ 'eight','eight','nine','nine']
  *   sortDigitNamesByNumericOrder([ 'one','one','one','zero' ]) => [ 'zero','one','one','one' ]
  */
-function sortDigitNamesByNumericOrder(/* arr */) {
-  throw new Error('Not implemented');
+function sortDigitNamesByNumericOrder(arr) {
+  const dictionary = {
+    zero: 0,
+    one: 1,
+    two: 2,
+    three: 3,
+    four: 4,
+    five: 5,
+    six: 6,
+    seven: 7,
+    eight: 8,
+    nine: 9,
+  };
+  return arr.sort((a, b) => {
+    return dictionary[a] - dictionary[b];
+  });
 }
 
 /**
@@ -594,8 +622,18 @@ function sortDigitNamesByNumericOrder(/* arr */) {
  *   swapHeadAndTail([]) => []
  *
  */
-function swapHeadAndTail(/* arr */) {
-  throw new Error('Not implemented');
+function swapHeadAndTail(arr) {
+  const mid = Math.floor(arr.length / 2);
+  if (arr.length % 2 === 0) {
+    return [arr.slice(mid, arr.length) + arr.slice(0, mid)]
+      .join('')
+      .replace(/,/g, '')
+      .split('');
+  }
+  return [arr.slice(mid + 1, arr.length) + arr[mid] + arr.slice(0, mid)]
+    .join('')
+    .replace(/,/g, '')
+    .split('');
 }
 
 module.exports = {
